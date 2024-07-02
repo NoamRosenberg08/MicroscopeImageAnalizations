@@ -73,52 +73,52 @@ def prepare_image_for_area_calcs(image: Image):
     return image
 
 
+def count_unoccupied(image: Image):
+    return np.count_nonzero(np.array(image))
+
+
+def count_occupied(image: Image):
+    arr = np.array(image)
+    return arr.size - np.count_nonzero(arr)
+
+
 def find_occupied_percentage(image: Image):
-    image = prepare_image_for_area_calcs(image)
-
-    image_arr = np.array(image)
-    total_pixels = image_arr.size
-    total_unoccupied = np.count_nonzero(image_arr)
-
-    occupied_percentage = (total_unoccupied / total_pixels) * 100
-    image.show()
-    return occupied_percentage
+    return count_occupied(image) / np.array(image).size
 
 
 def find_unoccupied_percentage(image: Image):
+    return count_unoccupied(image) / np.array(image).size
+
+
+def calculate_occupied_percentage(image: Image):
     image = prepare_image_for_area_calcs(image)
-
-    image_arr = np.array(image)
-    total_pixels = image_arr.size
-    total_occupied = np.count_nonzero(image_arr)
-
-    unoccupied_percentage = ((image_arr.size - total_occupied) / total_pixels) * 100
-    return unoccupied_percentage
+    return find_occupied_percentage(image)
 
 
-def image_to_mat(image: Image):
-    return image.load()
+def calculate_unoccupied_percentage(image: Image):
+    image = prepare_image_for_area_calcs(image)
+    return find_unoccupied_percentage(image)
 
 
 if __name__ == '__main__':
 
-    # images = []
-    # for i in range(10):
-    #     images.append(Image.open("IMC100nm_1As/filnm_15minanneal" + str(i) + ".tif"))
+    images = []
+    for i in range(4):
+        images.append(Image.open("images/IMC100nm_1As/filnm_15minanneal" + str(i) + ".tif"))
+
+    for i, image in enumerate(images, 0):
+        occupied_percentage = calculate_occupied_percentage(image)
+        unoccupied_percentage = calculate_unoccupied_percentage(image)
+        print(f"image {i}", occupied_percentage * 100)
+        assert occupied_percentage + unoccupied_percentage == 1  # assert occupied_percentage + unoccupied_percentage == 100
+
+    # img = Image.open("images/IMC100nm_1As/filnm_30minanneal4.tif").convert("L")
     #
-    # for i, image in enumerate(images, 0):
-    #     occupied_percentage = find_occupied_percentage(image)
-    #     unoccupied_percentage = find_unoccupied_percentage(image)
-    #     print(f"image {i}", occupied_percentage)
-    #     assert occupied_percentage + unoccupied_percentage == 100    # assert occupied_percentage + unoccupied_percentage == 100
-
-
-    img = Image.open("IMC100nm_1As/filnm_30minanneal4.tif").convert("L")
-
-    occupied_percentage = find_occupied_percentage(img)
-    unoccupied_percentage = find_unoccupied_percentage(img)
-    print(occupied_percentage)
-    assert occupied_percentage + unoccupied_percentage == 100
+    # occupied_percentage = calculate_occupied_percentage(img)
+    # unoccupied_percentage = calculate_unoccupied_percentage(img)
+    # print(occupied_percentage)
+    # print(unoccupied_percentage)
+    # assert occupied_percentage + unoccupied_percentage == 1
     # find_occupied_percentage(img) +
 
     # crop(img, BOTTOM_CROP_VALUE)
